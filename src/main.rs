@@ -75,8 +75,8 @@ fn spline(points: Vec<(i32, i32)>) -> String {
 
         let cp1x = x1 + ((x2 - x0) / 6);
         let cp1y = y1 + ((y2 - y0) / 6);
-        let cp2x = x2 + ((x3 - x1) / 6);
-        let cp2y = y2 + ((y3 - y1) / 6);
+        let cp2x = x2 - ((x3 - x1) / 6);
+        let cp2y = y2 - ((y3 - y1) / 6);
 
         path.push_str(&format!(
             " C {},{} {},{} {},{}",
