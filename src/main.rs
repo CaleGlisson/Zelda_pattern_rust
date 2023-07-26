@@ -43,35 +43,16 @@ fn spline(points: Vec<(i32, i32)>) -> String {
     let mut path = format!("M {},{}", points[0].0, points[0].1);
 
     for i in 0..size - 1 {
-        let x0;
-        let x1;
-        let x2;
-        let x3;
-        let y0;
-        let y1;
-        let y2;
-        let y3;
+        let x0 = if i == 0 { points[0].0 } else { points[i - 1].0 };
+        let y0 = if i == 0 { points[0].1 } else { points[i - 1].1 };
 
-        if i == 0 {
-            x0 = points[0].0;
-            y0 = points[0].1;
-        } else {
-            x0 = points[i - 1].0;
-            y0 = points[i - 1].1;
-        }
+        let x1 = points[i].0;
+        let y1 = points[i].1;
+        let x2 = points[i + 1].0;
+        let y2 = points[i + 1].1;
 
-        x1 = points[i].0;
-        y1 = points[i].1;
-        x2 = points[i + 1].0;
-        y2 = points[i + 1].1;
-
-        if i == last {
-            x3 = x2;
-            y3 = y2;
-        } else {
-            x3 = points[i + 2].0;
-            y3 = points[i + 2].1;
-        }
+        let x3 = if i == last { x2 } else { points[i + 2].0 };
+        let y3 = if i == last { y2 } else { points[i + 2].1 };
 
         let cp1x = x1 + ((x2 - x0) / 6);
         let cp1y = y1 + ((y2 - y0) / 6);
