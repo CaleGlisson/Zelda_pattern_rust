@@ -40,7 +40,7 @@ fn draw_group(x: f32, y: f32, d: f32, group_color: Color) -> Vec<Circle> {
 fn spline(points: Vec<(i32, i32)>) -> String {
     let size = points.len();
     let last = size - 2;
-    let mut path = format!("M {} {}", points[0].0, points[0].1);
+    let mut path = format!("M {},{}", points[0].0, points[0].1);
 
     for i in 0..size - 1 {
         let x0;
@@ -79,7 +79,7 @@ fn spline(points: Vec<(i32, i32)>) -> String {
         let cp2y = y2 + ((y3 - y1) / 6);
 
         path.push_str(&format!(
-            " C {} {} {} {} {} {}",
+            " C {},{} {},{} {},{}",
             cp1x, cp1y, cp2x, cp2y, x2, y2
         ));
     }
@@ -129,11 +129,6 @@ fn main() {
         });
     }
 
-    lines.push(Squiggle {
-        color: group_color,
-        commands: generate_squiggle_commands(10, 10, 20),
-    });
-
     for circle in circles {
         model.push(circle);
     }
@@ -170,6 +165,16 @@ slint::slint! {
                     height: 100%;
                 }
 
+                for squiggle[idx] in root.squiggle : Path {
+                    stroke: squiggle.color;
+                    stroke-width: 10px;
+                    commands: squiggle.commands;
+                    viewbox-x: 0;
+                    viewbox-y: 0;
+                    viewbox-width: 1000;
+                    viewbox-height: 1000;
+                    clip: true;
+                }
                 for circle[idx] in root.model : Rectangle {
                     background: circle.background;
                     border-color: circle.border;
@@ -179,11 +184,6 @@ slint::slint! {
                     width: circle.d;
                     x: circle.x - self.width/2;
                     y: circle.y - self.height/2;
-                }
-                for squiggle[idx] in root.squiggle : Path {
-                    stroke: squiggle.color;
-                    stroke-width: 10px;
-                    commands: squiggle.commands;
                 }
             }
         }
