@@ -103,12 +103,12 @@ fn main() {
     let squiggle_width = rng.gen_range(10..15);
     let squiggle_height = rng.gen_range(60..90);
 
-    for x in (-linegap..(1000 + linegap)).step_by(linegap as usize) {
-        lines.push(Squiggle {
-            color: group_color,
-            commands: generate_squiggle_commands(x, squiggle_width, squiggle_height),
-        });
-    }
+    lines.push(Squiggle {
+        spacing: linegap as f32,
+        squiggle_width: squiggle_width as f32,
+        color: group_color,
+        commands: generate_squiggle_commands(0, squiggle_width, squiggle_height),
+    });
 
     for circle in circles {
         model.push(circle);
@@ -126,7 +126,7 @@ slint::slint! {
     struct Circle { x: length, y: length, d: length, background: color,
         border: color }
 
-   struct Squiggle { color: color, commands: string }
+   struct Squiggle { spacing: length, squiggle_width: length, color: color, commands: string }
 
     export component MainWindow inherits Window {
         preferred-width: 1000px;
@@ -134,6 +134,9 @@ slint::slint! {
 
         in property <[Circle]> model;
         in property <[Squiggle]> squiggle;
+
+
+        private property<int> iters: root.width / root.squiggle[0].squiggle_width;
 
         VerticalBox {
             Rectangle {
@@ -146,16 +149,17 @@ slint::slint! {
                     height: 100%;
                 }
 
-                for squiggle[idx] in root.squiggle : Path {
-                    stroke: squiggle.color;
+                for i in iters : Path {
+                    x: (i * (root.squiggle[0].squiggle_width + root.squiggle[0].spacing))
+                         - (root.width / 2);
+                    stroke: root.squiggle[0].color;
                     stroke-width: 10px;
-                    commands: squiggle.commands;
+                    commands: root.squiggle[0].commands;
                     viewbox-x: 0;
                     viewbox-y: 0;
-                    viewbox-width: 1000;
-                    viewbox-height: 1000;
                     clip: true;
                 }
+
                 for circle[idx] in root.model : Rectangle {
                     background: circle.background;
                     border-color: circle.border;
